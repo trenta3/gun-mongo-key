@@ -28,12 +28,16 @@ var gunMongoKey = new KeyValAdapter({
             let database = mongo.database || 'gun';
             let port = mongo.port || '27017';
             let host = mongo.host || 'localhost';
+            let user = mongo.user;
+            let password = mongo.password;
             let query = mongo.query ? '?' + mongo.query : '';
             this.collection = mongo.collection || 'gun_mongo_key';
             let connectionOpt = mongo.opt || {
                 poolSize: 25
             };
-            this.db = Mongojs(`mongodb://${host}:${port}/${database}${query}`, null, connectionOpt);
+            let connectionurl = mongo.url ? mongo.url : (user && password) ? `mongodb://${user}:${password}@${host}:${port}/${database}${query}` : `mongodb://${host}:${port}/${database}${query}`;
+            
+            this.db = Mongojs(connectionurl, null, connectionOpt);
 
             // Streaming Chunk size
             this.chunkSize = mongo.chunkSize || 250;
